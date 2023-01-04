@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+</head>
+<body>
+    <select name="categories" id="categories">
+        <option value="">Выберите категорию</option>
+        {% for elem in categories_list %}
+        <option value="{{ elem }}">
+            {{ elem }}
+        </option>
+        {% endfor %}
+    </select>
+    <select name="regions" id="regions">
+        <option value="">Выберите регион</option>
+        {% for elem in regions_list %}
+        <option value="{{ elem }}">
+            {{ elem }}
+        </option>
+        {% endfor %}
+    </select>
+    <form name="form1" action="">
+        Введите название объявления <br>
+        <textarea name="text1" id="text1" cols="30" rows="1"></textarea>
+        <button>
+            Найти
+        </button>
+    </form>
+</body>
+</html>

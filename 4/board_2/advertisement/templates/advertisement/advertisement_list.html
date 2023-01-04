@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Объявления</title>
+</head>
+<body>
+    <p>Объявления:</p>
+    <ul>
+        {% for elem in lst_1 %}
+        <li>
+            {{ elem }}
+        </li>
+        {% endfor %}
+        {% for elem in lst_2 %}
+        <li>
+            {{ elem }}
+        </li>
+        {% endfor %}
+        {% for elem in lst_3 %}
+        <li>
+            {{ elem }}
+        </li>
+        {% endfor %}
+    </ul>
+    <p>
+        Число запросов: {{ count }}
+    </p>
+</body>
+</html>
