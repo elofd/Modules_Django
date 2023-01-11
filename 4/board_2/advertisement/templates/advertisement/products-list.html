@@ -1,0 +1,31 @@
+{% extends 'advertisement/base.html' %}
+
+{% block title %}
+    Список продуктов
+{% endblock %}
+
+{% block body %}
+    <h1>
+        Список продуктов:
+    </h1>
+    <ul>
+        {% for product in products %}
+            <li>
+                <p>
+                    Название: {{ product.name }}
+                </p>
+                <p>
+                     Цена: ${{ product.price }}
+                </p>
+                <p>
+                    Скидка: {% firstof product.discount 'Скидки нет' %}
+                </p>
+                <p>
+                    Был создан: {{ product.created_at }}
+                </p>
+            </li>
+        {% empty %}
+            Нет продуктов
+        {% endfor %}
+    </ul>
+{% endblock %}

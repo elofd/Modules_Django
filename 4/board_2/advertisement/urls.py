@@ -8,5 +8,9 @@ urlpatterns = [
     path('categories/', views.categories, name='categories'),
     path('regions/', views.Regions.as_view(), name='regions'),
     path('', views.MainPage.as_view(), name='advertisement_list'),
-    path('advertisement', views.AdvertisementList.as_view(), name='advertisement_list_class')
+    path('advertisement/', views.AdvertisementList.as_view(), name='advertisement_list_class'),
+    path('advertisements/', views.advertisement_list, name='advertisement_list'),
+    path('groups/', views.groups_list, name='groups_list'),
+    path('products/', views.products_list, name='products_list'),
+    path('orders/', views.orders_list, name='orders_list'),
 ]

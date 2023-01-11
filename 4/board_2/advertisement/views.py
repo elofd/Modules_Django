@@ -1,7 +1,37 @@
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
+from django.contrib.auth.models import Group
+from .models import Advertisement, Product, Order
+from random import randint
+
+
+def orders_list(request: HttpRequest, *args, **kwargs):
+    context = {
+        "orders": Order.objects.select_related("user").prefetch_related("products").all(),
+    }
+    return render(request, "advertisement/orders-list.html", context=context)
+
+
+def products_list(request: HttpRequest, *args, **kwargs):
+    context = {
+        "products": Product.objects.all(),
+    }
+    return render(request, 'advertisement/products-list.html', context=context)
+
+
+def groups_list(request: HttpRequest, *args, **kwargs):
+    context = {
+        'groups': Group.objects.prefetch_related('permissions').all(),
+    }
+    return render(request, 'advertisement/groups.html', context=context)
+
+
+def advertisement_list(request, *args, **kwargs):
+    advertisements = Advertisement.objects.all()
+    rnd_adv = Advertisement.objects.all()[randint(0, 5)]
+    return render(request, 'advertisement/advertisements.html', {'advertisements': advertisements, 'rnd_adv': rnd_adv})
 
 
 def categories(request, *args, **kwargs):

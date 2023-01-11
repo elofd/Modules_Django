@@ -1,0 +1,28 @@
+{% extends 'advertisement/base.html' %}
+
+{% block title %}
+    Группы
+{% endblock %}
+
+{% block body %}
+<h1>
+    Список групп:
+</h1>
+<ul>
+    {% for group in groups %}
+        <li>
+            <div>{{ group.name }}</div>
+            <ul>
+                {% for permission in group.permissions.all %}
+                    <li>
+                        {{ permission.name }}
+                        (<code>{{ permission.codename }}</code>)
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% empty %}
+        No any groups
+    {% endfor %}
+</ul>
+{% endblock %}

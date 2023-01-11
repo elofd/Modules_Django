@@ -1,0 +1,31 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+    Списко заказов
+{% endblock %}
+
+{% block body %}
+    <h1>
+        Список заказов:
+    </h1>
+    <ul>
+        {% for order in orders %}
+            <li>
+                <p>Адрес заказа: {{ order.delivery_address }}</p>
+                <p>Промокод: {{ order.promocode }}</p>
+                <p>Время заказа: {{ order.created_at }}</p>
+                <p>Получатель: {{ order.user }}</p>
+                <p>Список продуктов:</p>
+                <ul>
+                    {% for product in order.products.all %}
+                        <li>
+                            {{ product.name }} for ${{ product.price }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% empty %}
+            Новых заказов нет
+        {% endfor %}
+    </ul>
+{% endblock %}
