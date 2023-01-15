@@ -238,3 +238,9 @@
 Дата посещений: 2023-01-11 11:12:03 URL: localhost:8000/products/ HTTP метод: GET 
 Дата посещений: 2023-01-11 11:12:23 URL: localhost:8000/products/ HTTP метод: GET 
 Дата посещений: 2023-01-11 11:12:30 URL: localhost:8000/products/ HTTP метод: GET 
+Дата посещений: 2023-01-11 11:22:43 URL: localhost:8000/products/ HTTP метод: GET 
+Дата посещений: 2023-01-11 15:05:35 URL: localhost:8000/products/ HTTP метод: GET 
+Дата посещений: 2023-01-11 15:05:44 URL: localhost:8000/orders/ HTTP метод: GET 
+Дата посещений: 2023-01-11 15:28:49 URL: localhost:8000/products/ HTTP метод: GET 
+Дата посещений: 2023-01-11 15:29:10 URL: localhost:8000/products/ HTTP метод: GET 
+Дата посещений: 2023-01-12 15:14:07 URL: localhost:8000/favicon.ico HTTP метод: GET 
