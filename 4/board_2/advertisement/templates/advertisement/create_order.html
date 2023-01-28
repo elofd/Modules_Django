@@ -1,0 +1,25 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+  Create Order
+{% endblock %}
+
+{% block body %}
+  <h1>
+    Создание ордера
+  </h1>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">
+        Создать
+      </button>
+    </form>
+  </div>
+  <div>
+    <a href="{% url 'orders_list' %}">
+      Назад к списку заказов
+    </a>
+  </div>
+{% endblock %}

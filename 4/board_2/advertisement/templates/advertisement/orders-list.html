@@ -28,4 +28,9 @@
             Новых заказов нет
         {% endfor %}
     </ul>
+    <div>
+        <a href="{% url 'create_order' %}">
+            Создать заказ
+        </a>
+    </div>
 {% endblock %}
