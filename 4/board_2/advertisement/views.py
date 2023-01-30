@@ -1,64 +1,13 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
-from django.views.generic import TemplateView
-from django.http import HttpResponse, HttpRequest
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.contrib.auth.models import Group
 from .models import Advertisement, Product, Order
 from random import randint
-from .forms import ProductForm, OderForm
-
-
-def orders_list(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-    context = {
-        "orders": Order.objects.select_related("user").prefetch_related("products").all(),
-    }
-    return render(request, "advertisement/orders-list.html", context=context)
-
-
-def create_order(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-    if request.method == "POST":
-        form = OderForm(request.POST)
-        if form.is_valid():
-            form.save()
-            url = reverse("orders_list")
-            return redirect(url)
-    else:
-        form = OderForm()
-    context = {
-        "form": form
-    }
-    return render(request, 'advertisement/create_order.html', context=context)
-
-def products_list(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-    context = {
-        "products": Product.objects.all(),
-    }
-    return render(request, 'advertisement/products-list.html', context=context)
-
-
-def create_product(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-    if request.method == "POST":
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            # name = form.cleaned_data["name"]
-            # price = form.cleaned_data["price"]
-            # Product.objects.create(**form.cleaned_data)
-            form.save()
-            url = reverse("products_list")
-            return redirect(url)
-    else:
-        form = ProductForm()
-    context = {
-        "form": form,
-    }
-    return render(request, 'advertisement/create_product.html', context=context)
-
-
-def groups_list(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-    context = {
-        'groups': Group.objects.prefetch_related('permissions').all(),
-    }
-    return render(request, 'advertisement/groups.html', context=context)
+from .forms import ProductForm, OderForm, GroupForm
+from timeit import default_timer
+from django.urls import reverse_lazy
 
 
 def advertisement_list(request, *args, **kwargs) -> HttpResponse:
@@ -70,6 +19,114 @@ def advertisement_list(request, *args, **kwargs) -> HttpResponse:
 def categories(request, *args, **kwargs) -> HttpResponse:
     categories_list = ['личные вещи', 'транспорт', 'хобби', 'отдых']
     return render(request, 'advertisement/categories.html', {'categories_list': categories_list})
+
+
+class OrdersListView(ListView):
+    queryset = (
+        Order.objects.select_related("user").prefetch_related("products")
+    )
+
+
+class OrderDetailView(DetailView):
+    queryset = (
+        Order.objects.select_related("user").prefetch_related("products")
+    )
+
+
+class OrderCreateView(CreateView):
+    model = Order
+    fields = "delivery_address", "promocode", "user", "products"
+    success_url = reverse_lazy("orders_list")
+
+
+class OrderUpdateView(UpdateView):
+    model = Order
+    fields = "delivery_address", "promocode", "user", "products"
+    template_name_suffix = "_update_form"
+
+    def get_success_url(self):
+        return reverse("order_details", kwargs={
+            "pk": self.object.pk
+        })
+
+
+class OrderDeleteView(DeleteView):
+    model = Order
+    success_url = reverse_lazy("orders_list")
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy("products_list")
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        self.object.archived = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    fields = "name", "price", "description", "discount"
+    template_name_suffix = "_update_form"
+
+    def get_success_url(self):
+        return reverse("product_details",
+                       kwargs={
+             "pk": self.object.pk
+        })
+
+
+class ProductCreateView(CreateView):
+    """ Не нужно создавать отдельно форму и делать form.is_valid() """
+    model = Product
+    fields = "name", "price", "description", "discount"
+    # form_class = ProductForm
+    success_url = reverse_lazy("products_list")
+
+
+class ProductsListView(ListView):
+    template_name = 'advertisement/products-list.html'
+    # model = Product
+    queryset = Product.objects.filter(archived=False)
+    context_object_name = "products"
+
+
+class ProductDetailsView(DetailView):
+    template_name = 'advertisement/products-details.html'
+    model = Product
+    context_object_name = "product"
+
+
+class GroupsListView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        context = {
+            'form': GroupForm(),
+            'groups': Group.objects.prefetch_related('permissions').all(),
+        }
+        return render(request, 'advertisement/groups.html', context=context)
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+        # return self.render(request)
+        return redirect(request.path)
+
+
+class ShopIndexView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        products = [
+            ('Laptop', 1999),
+            ('Desktop', 2999),
+            ('Smartphone', 999),
+        ]
+        context = {
+            "time_running": default_timer(),
+            "products": products,
+        }
+        return render(request, 'advertisement/shop-index.html', context=context)
 
 
 class Regions(View):
@@ -92,7 +149,6 @@ class AdvertisementList(View):
         lst_1 = ['Автомобили', 'Снегоходы', 'Яхты']
         return render(request, 'advertisement/advertisement_list.html', {'lst_1': lst_1, 'lst_2': lst_2,
                                                                          'lst_3': lst_3, 'count': count})
-
     def post(self, request):
         with open('./advertisement/templates/count.txt', 'r') as file:
             count = int(file.read())

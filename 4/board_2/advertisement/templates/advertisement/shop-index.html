@@ -1,0 +1,33 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+  Shop Index
+{% endblock %}
+
+{% block body %}
+  <h1>Hello Shop Index</h1>
+  <div>
+    <ul>
+      {% for product, price in products %}
+      <li>
+        {{ product }} for ${{ price }}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <p>
+    Time running: {{ time_running }}
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquam architecto asperiores consequatur
+    corporis delectus dolorum est excepturi facere magnam nostrum odio perspiciatis quaerat quam reiciendis repellat saepe, sit vitae.
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquam architecto asperiores consequatur
+    corporis delectus dolorum est excepturi facere magnam nostrum odio perspiciatis quaerat quam reiciendis repellat saepe, sit vitae.
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquam architecto asperiores consequatur
+    corporis delectus dolorum est excepturi facere magnam nostrum odio perspiciatis quaerat quam reiciendis repellat saepe, sit vitae.
+  </p>
+{% endblock %}

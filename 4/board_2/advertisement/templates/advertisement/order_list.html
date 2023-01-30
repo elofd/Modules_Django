@@ -9,7 +9,7 @@
         Список заказов:
     </h1>
     <ul>
-        {% for order in orders %}
+        {% for order in object_list %}
             <li>
                 <p>Адрес заказа: {{ order.delivery_address }}</p>
                 <p>Промокод: {{ order.promocode }}</p>
@@ -23,6 +23,9 @@
                         </li>
                     {% endfor %}
                 </ul>
+                <p>
+                    <a href="{% url 'order_details' pk=order.pk%}">Детали заказа {{ order.pk }}</a>
+                </p>
             </li>
         {% empty %}
             Новых заказов нет

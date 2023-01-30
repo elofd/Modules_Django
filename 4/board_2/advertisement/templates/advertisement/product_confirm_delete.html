@@ -1,0 +1,25 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+  Подтвердить архивирование {{ object.name }}
+{% endblock %}
+
+{% block body %}
+  <h1>Вы уверены, что хотите архивировать объект?</h1>
+  <br>
+  <div>
+    <a href="{% url 'product_details' pk=object.pk %}">
+      Назад к продукту
+    </a>
+  </div>
+  <br>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">
+        Архивировать
+      </button>
+    </form>
+  </div>
+{% endblock %}

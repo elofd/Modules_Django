@@ -1,0 +1,23 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+  Изменить заказ
+{% endblock %}
+
+{% block body %}
+  <h1>Изменить заказ</h1>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">
+        Изменить
+      </button>
+    </form>
+  </div>
+  <div>
+    <a href="{% url 'order_details' pk=object.pk %}">
+      Назад к заказу
+    </a>
+  </div>
+{% endblock %}

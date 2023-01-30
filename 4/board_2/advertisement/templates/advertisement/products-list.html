@@ -12,7 +12,9 @@
         {% for product in products %}
             <li>
                 <p>
-                    Название: {{ product.name }}
+                    <a href="{% url 'product_details' pk=product.pk %}">
+                        Название: {{ product.name }}
+                    </a>
                 </p>
                 <p>
                      Цена: ${{ product.price }}

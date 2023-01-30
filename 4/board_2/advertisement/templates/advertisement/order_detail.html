@@ -1,0 +1,42 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+  Детали заказа {{ object.pk }}
+{% endblock %}
+
+{% block body %}
+  <div>
+    <h1>Заказ # {{object.pk }}</h1>
+    <div>
+      Адрес заказа: {{ object.delivery_address }}
+    </div>
+    <div>
+      Промокод: {{ object.promocode }}
+    </div>
+    <div>
+      Время заказа: {{ object.created_at }}
+    </div>
+    <div>
+      Получатель: {{ object.user }}
+    </div>
+    <div>
+      Список продуктов:
+      <ul>
+        {% for product in object.products.all %}
+          <li>
+            {{ product.name }} for ${{ product.price }}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div>
+    <a href="{% url 'order_update' pk=object.pk %}">Обновить заказ</a>
+  </div>
+  <div>
+    <a href="{% url 'order_delete' pk=object.pk %}">Удалить заказ</a>
+  </div>
+  <div>
+    <a href="{% url 'orders_list' %}">Назад к списку заказов</a>
+  </div>
+{% endblock %}

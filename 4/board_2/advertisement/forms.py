@@ -1,6 +1,8 @@
 from django import forms
 from django.core import validators
 from .models import Product, Order
+from django.contrib.auth.models import Group
+
 
 # class ProductForm(forms.Form):
 #     name = forms.CharField(label='Название' ,max_length=100)
@@ -23,3 +25,9 @@ class OderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = "delivery_address", "promocode", "user", "products"
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = "name",

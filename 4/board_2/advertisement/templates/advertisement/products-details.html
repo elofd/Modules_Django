@@ -1,0 +1,32 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+    Описание продукта {{ product.pk }}
+{% endblock %}
+
+{% block body %}
+    <h1>Продукт <strong>{{ product.name }}</strong></h1>
+    <div>
+        <div>
+            Описание: <em> {{ product.description }}</em>
+        </div>
+        <div>
+            Цена: {{ product.price }}
+        </div>
+        <div>
+            Скидка: {{ product.discount }}
+        </div>
+        <div>
+            Статус: {{ product.archived }}
+        </div>
+    </div>
+    <div>
+        <a href="{% url 'product_update' pk=product.pk %}">Изменить продукт</a>
+    </div>
+    <div>
+        <a href="{% url 'product_delete' pk=product.pk %}">Архивировать продукт</a>
+    </div>
+    <div>
+        <a href="{% url 'products_list' %}">Назад к списку продуктов</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+    Редактирование продукта
+{% endblock %}
+
+{% block body %}
+    <h1>
+        Редактирование продукта
+    </h1>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">
+                Редактировать
+            </button>
+        </form>
+    </div>
+    <div>
+        <a href="{% url 'product_details' pk=object.pk %}">
+            Назад к продукту {{ object.pk }}
+        </a>
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "advertisement/base.html" %}
+
+{% block title %}
+  Удаление заказа {{ object.pk }}
+{% endblock %}
+
+{% block body %}
+  <h1>Вы уверены, что хотите удалить заказ {{ object.pk }}?</h1>
+  <div>
+    <a href="{% url 'order_details' pk=object.pk %}">
+      Назад к заказу
+    </a>
+  </div>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">
+        Удалить
+      </button>
+    </form>
+  </div>
+{% endblock %}
