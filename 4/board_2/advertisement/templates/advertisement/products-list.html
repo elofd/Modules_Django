@@ -25,14 +25,19 @@
                 <p>
                     Был создан: {{ product.created_at }}
                 </p>
+                <p>
+                    Создатель: {{ product.created_by }}
+                </p>
             </li>
         {% empty %}
             Нет продуктов
         {% endfor %}
     </ul>
     <div>
-        <a href="{% url 'create_product' %}">
-            Создать новый продукт
-        </a>
+        {% if perms.advertisement.add_product %}
+            <a href="{% url 'create_product' %}">
+                Создать новый продукт
+            </a>
+        {% endif %}
     </div>
 {% endblock %}

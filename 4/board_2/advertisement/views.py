@@ -8,6 +8,8 @@ from random import randint
 from .forms import ProductForm, OderForm, GroupForm
 from timeit import default_timer
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 
 
 def advertisement_list(request, *args, **kwargs) -> HttpResponse:
@@ -21,13 +23,14 @@ def categories(request, *args, **kwargs) -> HttpResponse:
     return render(request, 'advertisement/categories.html', {'categories_list': categories_list})
 
 
-class OrdersListView(ListView):
+class OrdersListView(LoginRequiredMixin, ListView):
     queryset = (
         Order.objects.select_related("user").prefetch_related("products")
     )
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = ["advertisement.view_order"]
     queryset = (
         Order.objects.select_related("user").prefetch_related("products")
     )
@@ -39,7 +42,8 @@ class OrderCreateView(CreateView):
     success_url = reverse_lazy("orders_list")
 
 
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ["advertisement.change_order", ]
     model = Order
     fields = "delivery_address", "promocode", "user", "products"
     template_name_suffix = "_update_form"
@@ -66,7 +70,15 @@ class ProductDeleteView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(UserPassesTestMixin, UpdateView):
+    def test_func(self):
+        if self.request.user.is_superuser:
+            return True
+        self.object = self.get_object()
+        has_edit_perm = self.request.user.has_perm("advertisement.change_product")
+        created_by_current_user = self.object.created_by == self.request.user
+        return has_edit_perm and created_by_current_user
+
     model = Product
     fields = "name", "price", "description", "discount"
     template_name_suffix = "_update_form"
@@ -78,8 +90,13 @@ class ProductUpdateView(UpdateView):
         })
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(PermissionRequiredMixin, CreateView):
     """ Не нужно создавать отдельно форму и делать form.is_valid() """
+    def form_valid(self, form):
+        form.instance.created_by_id = self.request.user
+        return super().form_valid(form)
+
+    permission_required = ["advertisement.add_product", ]
     model = Product
     fields = "name", "price", "description", "discount"
     # form_class = ProductForm

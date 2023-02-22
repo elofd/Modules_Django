@@ -9,7 +9,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Создание продуктов")
         products_names = [
-            "Laptop", "Desctop", "Smartphone"
+            # "Laptop", "Desctop", "Smartphone"
+            "Smartphone1"
         ]
         for product_name in products_names:
             product, created = Product.objects.get_or_create(name=product_name)

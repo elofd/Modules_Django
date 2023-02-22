@@ -15,5 +15,7 @@ urlpatterns = [
     path("session/get/", views.get_session_view, name="session-get"),
     path("session/set/", views.set_session_view, name="session-set"),
     # path("logout/", views.logout_view, name="logout"),
-    path("logout/", views.MyLogoutView.as_view(), name="logout")
+    path("logout/", views.MyLogoutView.as_view(), name="logout"),
+    path("about-me/", views.AboutMeView.as_view(), name="about-me"),
+    path("register/", views.RegisterView.as_view(), name="register"),
 ]
