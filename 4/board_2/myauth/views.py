@@ -3,16 +3,12 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib.auth.views import LogoutView
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, ListView
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.views import View
-
-
-
-class AboutMeView(TemplateView):
-    template_name = "myauth/about-me.html"
+from django.contrib.auth.models import User
 
 
 class RegisterView(CreateView):
@@ -28,6 +24,36 @@ class RegisterView(CreateView):
         user = authenticate(self.request, username=username, password=password)
         login(self.request, user=user)
         return response
+
+
+class AboutMeView(TemplateView):
+    template_name = "myauth/about-me.html"
+
+
+class UpdateAvatar(UpdateView):
+    template_name = "avatar_update_form.html"
+    model = Profile
+    fields = "avatar"
+
+    def get_success_url(self):
+        return reverse("about-me")
+
+
+class UsersListView(ListView):
+    queryset = (
+        User.objects.all()
+    )
+    template_name = "users_list.html"
+    context_object_name = "users"
+
+
+def logout_view(request: HttpRequest) -> HttpResponse:
+    logout(request)
+    return redirect(reverse("myauth:login"))
+
+
+class MyLogoutView(LogoutView):
+    next_page = reverse_lazy("myauth:login")
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -54,18 +80,10 @@ def get_session_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(f"Session value: {value!r}")
 
 
-def logout_view(request: HttpRequest) -> HttpResponse:
-    logout(request)
-    return redirect(reverse("myauth:login"))
-
-
-class MyLogoutView(LogoutView):
-    next_page = reverse_lazy("myauth:login")
-
-
 class FooBarView(View):
     def get(self, request: HttpRequest) -> JsonResponse:
         return JsonResponse({'foo': 'bar', 'spam': 'eggs'})
+
 
 # def login_view(request: HttpRequest) -> HttpResponse:
 #     if request.method == 'GET':

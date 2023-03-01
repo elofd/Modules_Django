@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Order
+from .models import Product, Order, ProductImage
 from django.http import HttpRequest
 from django.db.models import QuerySet
 from .admin_mixins import ExportAsCSVMixin
@@ -14,8 +14,13 @@ def mark_archived(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: 
 def mark_unarchived(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet):
     queryset.update(archived=False)
 
+
 class OrderInline(admin.TabularInline):
     model = Product.orders.through
+
+
+class ProductInline(admin.StackedInline):
+    model = ProductImage
 
 
 @admin.register(Product)
@@ -27,6 +32,7 @@ class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
     ]
     inlines = [
         OrderInline,
+        ProductInline,
     ]
     # list_display = "pk", "name", "description", "price", "discount"
     list_display = "pk", "name", "description_short", "price", "discount", "archived"
@@ -45,7 +51,10 @@ class ProductAdmin(admin.ModelAdmin, ExportAsCSVMixin):
             "fields": ("archived",),
             "classes": ("collapse",),
             "description": ("Extra options. Field 'archived' is for soft delete.")
-        })
+        }),
+        ("Images", {
+            "fields": ("preview", ),
+        }),
     ]
 
     def description_short(self, object: Product) -> str:

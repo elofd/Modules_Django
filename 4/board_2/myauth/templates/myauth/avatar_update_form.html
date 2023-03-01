@@ -1,0 +1,20 @@
+{% extends 'myauth/base.html' %}
+
+{% block title %}
+    Измененить автар
+{% endblock %}
+
+{% block body %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf-token %}
+        {{ form.as_p }}
+        <button type="submit">
+            Изменить
+        </button>
+    </form>
+    <div>
+        <a href="{% url 'about-me' %}">
+            Назад к информации о пользователе
+        </a>
+    </div>
+{% endblock %}

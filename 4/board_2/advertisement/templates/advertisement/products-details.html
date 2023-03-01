@@ -22,6 +22,23 @@
         {% if product.preview %}
             <img src="{{ product.preview.url }}" alt="{{ product.preview.name }}">
         {% endif %}
+        <h3>
+            Images
+        </h3>
+        <div>
+            {% for img in product.images.all %}
+                <div>
+                    <img src="{{ img.image.url }}" alt="{{ img.image.name }}">
+                    <div>
+                        {{ img.description }}
+                    </div>
+                </div>
+            {% empty %}
+                <div>
+                    Картинок не найдено.
+                </div>
+            {% endfor %}
+        </div>
     </div>
     <div>
         <a href="{% url 'product_update' pk=product.pk %}">Изменить продукт</a>

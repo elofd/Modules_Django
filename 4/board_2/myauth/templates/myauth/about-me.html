@@ -8,6 +8,19 @@
   <h1>Информация о пользователе</h1>
   {% if user.is_authenticated %}
     <h2>Детали</h2>
+    <div>
+      <p>
+        Аватар:
+      </p>
+      {% if user.profile.avatar %}
+        <img src="{{ user.profile.avatar }}" alt="Аватар пользователя">
+      {% else %}
+        <p>Аватар не найден</p>
+      {% endif %}
+      <p>
+        <a href="{% url 'update_avatar' pk=user.pk %}">Изменить аватар</a>
+      </p>
+    </div>
     <p>
       Имя пользователя {{ user.username }}
     </p>

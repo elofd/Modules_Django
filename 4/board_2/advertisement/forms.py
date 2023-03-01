@@ -15,10 +15,16 @@ from django.contrib.auth.models import Group
 #             message="Поле должно содержать слово 'great'"
 #         )],
 #     )
+
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = "name", "price", "description", "discount"
+        fields = "name", "price", "description", "discount", "preview"
+
+    images = forms.ImageField(
+        widget=forms.ClearableFileInput(attrs={"multiple": True}),
+    )
 
 
 class OderForm(forms.ModelForm):

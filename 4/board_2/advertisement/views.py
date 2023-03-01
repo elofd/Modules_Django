@@ -3,37 +3,13 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.models import Group
-from .models import Advertisement, Product, Order
+from .models import Advertisement, Product, Order, ProductImage
 from random import randint
 from .forms import ProductForm, OderForm, GroupForm
 from timeit import default_timer
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 # from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
-
-
-def advertisement_list(request, *args, **kwargs) -> HttpResponse:
-    advertisements = Advertisement.objects.all()
-    rnd_adv = Advertisement.objects.all()[randint(0, 5)]
-    return render(request, 'advertisement/advertisements.html', {'advertisements': advertisements, 'rnd_adv': rnd_adv})
-
-
-def categories(request, *args, **kwargs) -> HttpResponse:
-    categories_list = ['личные вещи', 'транспорт', 'хобби', 'отдых']
-    return render(request, 'advertisement/categories.html', {'categories_list': categories_list})
-
-
-class OrdersListView(LoginRequiredMixin, ListView):
-    queryset = (
-        Order.objects.select_related("user").prefetch_related("products")
-    )
-
-
-class OrderDetailView(PermissionRequiredMixin, DetailView):
-    permission_required = ["advertisement.view_order"]
-    queryset = (
-        Order.objects.select_related("user").prefetch_related("products")
-    )
 
 
 class OrderCreateView(CreateView):
@@ -54,40 +30,22 @@ class OrderUpdateView(PermissionRequiredMixin, UpdateView):
         })
 
 
+class OrderDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = ["advertisement.view_order"]
+    queryset = (
+        Order.objects.select_related("user").prefetch_related("products")
+    )
+
+
+class OrdersListView(LoginRequiredMixin, ListView):
+    queryset = (
+        Order.objects.select_related("user").prefetch_related("products")
+    )
+
+
 class OrderDeleteView(DeleteView):
     model = Order
     success_url = reverse_lazy("orders_list")
-
-
-class ProductDeleteView(DeleteView):
-    model = Product
-    success_url = reverse_lazy("products_list")
-
-    def form_valid(self, form):
-        success_url = self.get_success_url()
-        self.object.archived = True
-        self.object.save()
-        return HttpResponseRedirect(success_url)
-
-
-class ProductUpdateView(UserPassesTestMixin, UpdateView):
-    def test_func(self):
-        if self.request.user.is_superuser:
-            return True
-        self.object = self.get_object()
-        has_edit_perm = self.request.user.has_perm("advertisement.change_product")
-        created_by_current_user = self.object.created_by == self.request.user
-        return has_edit_perm and created_by_current_user
-
-    model = Product
-    fields = "name", "price", "description", "discount", "preview"
-    template_name_suffix = "_update_form"
-
-    def get_success_url(self):
-        return reverse("product_details",
-                       kwargs={
-             "pk": self.object.pk
-        })
 
 
 class ProductCreateView(PermissionRequiredMixin, CreateView):
@@ -103,6 +61,36 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy("products_list")
 
 
+class ProductUpdateView(UserPassesTestMixin, UpdateView):
+    def test_func(self):
+        if self.request.user.is_superuser:
+            return True
+        self.object = self.get_object()
+        has_edit_perm = self.request.user.has_perm("advertisement.change_product")
+        created_by_current_user = self.object.created_by == self.request.user
+        return has_edit_perm and created_by_current_user
+
+    model = Product
+    # fields = "name", "price", "description", "discount", "preview"
+    template_name_suffix = "_update_form"
+    form_class = ProductForm
+
+    def get_success_url(self):
+        return reverse("product_details",
+                       kwargs={
+             "pk": self.object.pk
+        })
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        for image in form.files.getlist("images"):
+            ProductImage.objects.create(
+                product=self.object,
+                image=image,
+            )
+        return response
+
+
 class ProductsListView(ListView):
     template_name = 'advertisement/products-list.html'
     # model = Product
@@ -112,8 +100,20 @@ class ProductsListView(ListView):
 
 class ProductDetailsView(DetailView):
     template_name = 'advertisement/products-details.html'
-    model = Product
+    # model = Product
+    queryset = Product.objects.prefetch_related("images")
     context_object_name = "product"
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy("products_list")
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        self.object.archived = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
 
 
 class ProductsDataExportView(View):
@@ -130,6 +130,17 @@ class ProductsDataExportView(View):
         ]
         return JsonResponse({"products": products_data})
 
+
+
+def advertisement_list(request, *args, **kwargs) -> HttpResponse:
+    advertisements = Advertisement.objects.all()
+    rnd_adv = Advertisement.objects.all()[randint(0, 5)]
+    return render(request, 'advertisement/advertisements.html', {'advertisements': advertisements, 'rnd_adv': rnd_adv})
+
+
+def categories(request, *args, **kwargs) -> HttpResponse:
+    categories_list = ['личные вещи', 'транспорт', 'хобби', 'отдых']
+    return render(request, 'advertisement/categories.html', {'categories_list': categories_list})
 
 
 class GroupsListView(View):
