@@ -76,7 +76,10 @@ class OrderAdmin(admin.ModelAdmin):
         }),
         ("author", {
             "fields": ("user",),
-        })
+        }),
+        ("receipt", {
+            "fields": ("receipt",),
+        }),
     ]
 
     def get_queryset(self, request):

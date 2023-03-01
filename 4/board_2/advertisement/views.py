@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.models import Group
 from .models import Advertisement, Product, Order
 from random import randint
@@ -80,7 +80,7 @@ class ProductUpdateView(UserPassesTestMixin, UpdateView):
         return has_edit_perm and created_by_current_user
 
     model = Product
-    fields = "name", "price", "description", "discount"
+    fields = "name", "price", "description", "discount", "preview"
     template_name_suffix = "_update_form"
 
     def get_success_url(self):
@@ -93,12 +93,12 @@ class ProductUpdateView(UserPassesTestMixin, UpdateView):
 class ProductCreateView(PermissionRequiredMixin, CreateView):
     """ Не нужно создавать отдельно форму и делать form.is_valid() """
     def form_valid(self, form):
-        form.instance.created_by_id = self.request.user
+        form.instance.created_by = self.request.user
         return super().form_valid(form)
 
     permission_required = ["advertisement.add_product", ]
     model = Product
-    fields = "name", "price", "description", "discount"
+    fields = "name", "price", "description", "discount", "created_by", "preview"
     # form_class = ProductForm
     success_url = reverse_lazy("products_list")
 
@@ -114,6 +114,22 @@ class ProductDetailsView(DetailView):
     template_name = 'advertisement/products-details.html'
     model = Product
     context_object_name = "product"
+
+
+class ProductsDataExportView(View):
+    def get(self, request: HttpRequest) -> JsonResponse:
+        products = Product.objects.order_by("pk").all()
+        products_data = [
+            {
+                "pk": product.pk,
+                "name": product.name,
+                "price": product.price,
+                "archived": product.archived,
+            }
+            for product in products
+        ]
+        return JsonResponse({"products": products_data})
+
 
 
 class GroupsListView(View):
@@ -202,3 +218,5 @@ class MainPage(TemplateView):
         context['categories_list'] = ['Приворот', 'Отворот', 'Поворот', 'Гадание', 'Пончики', 'Пицца', 'Шаурма']
         context['regions_list'] = ['Москва', 'Московская область', 'республика Алтай', 'Вологодская область']
         return context
+
+

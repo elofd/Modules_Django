@@ -32,6 +32,10 @@ class AdvertisementType(models.Model):
         return self.name
 
 
+def product_preview_directory_path(instanse: "Product", filename: str) -> str:
+    return "products/product_{pk}/preview/{filename}".format(pk=instanse.pk, filename=filename)
+
+
 class Product(models.Model):
     class Meta:
         ordering = ["name", "price"]
@@ -45,6 +49,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    preview = models.ImageField(null=True, blank=True, upload_to=product_preview_directory_path)
+
 
     # @property
     # def description_short(self) -> str:
@@ -63,3 +69,4 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     products = models.ManyToManyField(Product, related_name="orders")
+    receipt = models.FileField(null=True, upload_to='orders/receipts/')
