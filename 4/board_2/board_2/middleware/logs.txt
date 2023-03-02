@@ -2071,3 +2071,5 @@
 Дата посещений: 2023-03-01 07:50:52 URL: localhost:8000/accounts/about-me/1/avatar/ HTTP метод: GET 
 Дата посещений: 2023-03-01 07:51:37 URL: localhost:8000/accounts/about-me/1/avatar/ HTTP метод: GET 
 Дата посещений: 2023-03-01 08:00:01 URL: localhost:8000/accounts/about-me/1/avatar/ HTTP метод: GET 
+Дата посещений: 2023-03-02 10:58:15 URL: None/orders/1/ HTTP метод: GET 
+Дата посещений: 2023-03-02 11:03:29 URL: None/orders/export HTTP метод: GET 

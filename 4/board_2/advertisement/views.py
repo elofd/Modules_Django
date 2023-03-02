@@ -48,6 +48,27 @@ class OrderDeleteView(DeleteView):
     success_url = reverse_lazy("orders_list")
 
 
+class OrdersExportView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get(self, request: HttpRequest) -> JsonResponse:
+        orders = Order.objects.order_by('pk').all()
+        orders_data = [
+            {
+                'pk': order.pk,
+                'delivery_address': order.delivery_address,
+                'promocode': order.promocode,
+                'user': order.user,
+                'products': [
+                    product for product in order.products
+                ]
+            }
+            for order in orders
+        ]
+        return JsonResponse({'orders': orders_data})
+
+
 class ProductCreateView(PermissionRequiredMixin, CreateView):
     """ Не нужно создавать отдельно форму и делать form.is_valid() """
     def form_valid(self, form):

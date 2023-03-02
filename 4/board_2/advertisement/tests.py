@@ -46,11 +46,49 @@ class OrderDetailViewTestCase(TestCase):
         )
         self.assertContains(response, self.order.promocode)
         self.assertContains(response, self.order.delivery_address)
+        self.assertEqual(response.context['object'].pk, self.order.pk)
+
+
+class OrdersExportTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.user = User.objects.create_user(
+            username='Test_name',
+            password='qwrerty1234!',
+            is_staff=True,
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def setUp(self) -> None:
+        self.client.force_login(self.user)
+
+    def test_order_export(self):
+        fixtures = ['order-fixtures.json']
+        response = self.client.get(reverse('orders_export'))
+        self.assertEqual(response.status_code, 200)
+        orders = Order.objects.order_by('pk').all()
+        expected_data = [
+            {
+                'pk': order.pk,
+                'delivery_address': order.delivery_address,
+                'promocode': order.promocode,
+                'user': order.user,
+                'products': [
+                    product for product in order.products
+                ]
+            }
+            for order in orders
+        ]
+        orders_data = response.json()
+        self.assertEqual(orders_data['orders'], expected_data)
 
 
 class ProductsExportViewTestCase(TestCase):
     fixtures = [
-        'products-fixtures.json'
+        'product-fixtures.json'
     ]
 
     def test_get_products_view(self):
