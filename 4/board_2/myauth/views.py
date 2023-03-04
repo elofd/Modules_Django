@@ -9,6 +9,7 @@ from .models import Profile
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.views import View
 from django.contrib.auth.models import User
+from .forms import ProfileForm
 
 
 class RegisterView(CreateView):
@@ -31,20 +32,26 @@ class AboutMeView(TemplateView):
 
 
 class UpdateAvatar(UpdateView):
-    template_name = "avatar_update_form.html"
     model = Profile
-    fields = "avatar"
+    form_class = ProfileForm
+    template_name_suffix = "_update_form"
 
     def get_success_url(self):
-        return reverse("about-me")
+        return reverse("myauth:about-me")
 
 
 class UsersListView(ListView):
     queryset = (
         User.objects.all()
     )
-    template_name = "users_list.html"
+    template_name = "myauth/users_list.html"
     context_object_name = "users"
+
+
+class UserDetailsView(DetailView):
+    template_name = "myauth/user_details.html"
+    context_object_name = "user"
+    queryset = User.objects.all()
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:

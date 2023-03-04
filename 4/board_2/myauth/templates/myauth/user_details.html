@@ -1,0 +1,41 @@
+{% extends "myauth/base.html" %}
+
+{% block title %}
+  Информация о пользователе
+{% endblock %}
+
+{% block body %}
+  <h1>Информация о пользователе:</h1>
+  <h2>Детали</h2>
+  <div>
+    <p>
+      Аватар:
+    </p>
+    {% if user.profile.avatar %}
+      <img src="{{ user.profile.avatar.url }}" alt="Аватар пользователя">
+    {% else %}
+      <p>Аватар не найден</p>
+    {% endif %}
+    <p>
+      <a href="{% url 'myauth:update_avatar' pk=user.pk %}">Изменить аватар</a>
+    </p>
+  </div>
+  <p>
+    Имя пользователя: {{ user.username }}
+  </p>
+  <p>
+    Имя: {{ user.first_name }}
+  </p>
+  <p>
+    Фамилия: {{ user.last_name }}
+  </p>
+  <p>
+    Email: {{ user.email }}
+  </p>
+  <p>
+    О пользователе: {{ user.profile.bio }}
+  </p>
+  <p>
+    <a href="{% url 'myauth:users_list' %}">Назад к списку пользователей</a>
+  </p>
+{% endblock %}

@@ -13,7 +13,7 @@
     <li>
       <div>
         {% if user.profile.avatar %}
-          <img src="{{ user.profile.avatar }}" alt="Аватар пользователя">
+          <img src="{{ user.profile.avatar.url }}" alt="Аватар пользователя">
         {% else %}
           <p>Аватар не найден</p>
         {% endif %}
@@ -32,6 +32,11 @@
       </p>
       <p>
         О пользователе: {{ user.profile.bio }}
+      </p>
+      <p>
+        <a href="{% url 'myauth:user_details' pk=user.pk %}">
+          Детали о пользователе
+        </a>
       </p>
     </li>
   {% endfor %}

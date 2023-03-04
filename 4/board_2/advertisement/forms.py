@@ -27,7 +27,7 @@ class ProductForm(forms.ModelForm):
     )
 
 
-class OderForm(forms.ModelForm):
+class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = "delivery_address", "promocode", "user", "products"
@@ -36,4 +36,4 @@ class OderForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = "name",
+        fields = ["name"]

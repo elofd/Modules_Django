@@ -6,15 +6,13 @@
 
 {% block body %}
     <form method="post" enctype="multipart/form-data">
-        {% csrf-token %}
+        {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">
             Изменить
         </button>
     </form>
     <div>
-        <a href="{% url 'about-me' %}">
-            Назад к информации о пользователе
-        </a>
+
     </div>
 {% endblock %}

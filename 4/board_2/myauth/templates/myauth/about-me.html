@@ -13,12 +13,12 @@
         Аватар:
       </p>
       {% if user.profile.avatar %}
-        <img src="{{ user.profile.avatar }}" alt="Аватар пользователя">
+        <img src="{{ user.profile.avatar.url }}" alt="Аватар пользователя">
       {% else %}
         <p>Аватар не найден</p>
       {% endif %}
       <p>
-        <a href="{% url 'update_avatar' pk=user.pk %}">Изменить аватар</a>
+        <a href="{% url 'myauth:update_avatar' pk=user.pk %}">Изменить аватар</a>
       </p>
     </div>
     <p>
